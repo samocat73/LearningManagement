@@ -39,3 +39,12 @@ class Payment(models.Model):
     payment_method = models.CharField(
         verbose_name="Способ оплаты", help_text="Укажите способ оплаты"
     )
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="subscriptions"
+    )
+    course = models.ForeignKey(
+        to=Course, on_delete=models.CASCADE, related_name="subscriptions"
+    )

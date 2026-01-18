@@ -1,4 +1,3 @@
-from django.template.context_processors import request
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -6,19 +5,21 @@ from rest_framework.viewsets import ModelViewSet
 from users.permissions import IsModer, IsOwner
 
 from .models import Course, Lesson
+from .paginators import CustomPagination
 from .serializers import CourseSerializer, LessonSerializer
 
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = CustomPagination
 
     def get_permissions(self):
         if self.action == "create":
             self.permission_classes = [~IsModer & IsAuthenticated]
         elif self.action == "destroy":
-            self.permission_classes = [~IsModer & IsOwner]
-        elif self.action in ["retrieve", "update"]:
+            self.permission_classes = [~IsModer | IsOwner]
+        elif self.action in ["update", "retrieve", "partial_update"]:
             self.permission_classes = [IsOwner | IsModer]
         return super().get_permissions()
 
@@ -31,6 +32,7 @@ class CourseViewSet(ModelViewSet):
 class LessonListAPIView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = CustomPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
