@@ -1,3 +1,4 @@
+from django.template.context_processors import request
 from rest_framework import serializers
 
 from users.models import Subscription
@@ -19,7 +20,9 @@ class CourseSerializer(serializers.ModelSerializer):
     subscription_flag = serializers.SerializerMethodField()
 
     def get_subscription_flag(self, course):
-        if Subscription.objects.filter(course=course).exists():
+        if Subscription.objects.filter(
+            course=course, user=self.context["request"].user
+        ).exists():
             return "Подписан"
         else:
             return "Не подписан"
