@@ -46,3 +46,8 @@ class SubscriptionAPIView(views.APIView):
         else:
             message = "Подписка создана"
         return Response({"message": message})
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        subs_item = Subscription.objects.filter(user=user).values()
+        return Response({"subscription": subs_item})
