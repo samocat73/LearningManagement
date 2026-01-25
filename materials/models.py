@@ -33,7 +33,6 @@ class Lesson(models.Model):
     link = models.URLField(
         verbose_name="Ссылка на видео", help_text="Укажите ссылку на видео"
     )
-
     course = models.ForeignKey(
         to=Course, on_delete=models.CASCADE, related_name="lessons"
     )

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "users",
     "materials",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -104,3 +105,5 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "users.User"
+
+API_KEY_STRIPE = os.getenv("API_KEY_STRIPE")

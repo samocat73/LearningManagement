@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from materials.models import Course
 from users.models import Payment, Subscription, User
 from users.serializers import PaymentSerializer, UserSerializer
+from users.services import (create_stripe_price, create_stripe_product,
+                            create_stripe_sessions)
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
@@ -15,6 +17,15 @@ class PaymentViewSet(viewsets.ModelViewSet):
     filterset_fields = ["course", "lesson", "payment_method"]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["payment_dates"]
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        stripe_product = create_stripe_product(payment.course.title)
+        price = create_stripe_price(payment.amount, stripe_product.id)
+        session_id, payment_link = create_stripe_sessions(price.id)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -50,4 +61,4 @@ class SubscriptionAPIView(views.APIView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         subs_item = Subscription.objects.filter(user=user).values()
-        return Response({"subscription": subs_item})
+        return Response({"subscriptions": subs_item})

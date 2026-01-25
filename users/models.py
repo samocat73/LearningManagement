@@ -23,9 +23,17 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name="payment")
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name="payment",
+        blank=True,
+        null=True,
+    )
     payment_dates = models.DateField(
-        verbose_name="Дата оплаты", help_text="Укажите дату оплаты"
+        verbose_name="Дата оплаты",
+        blank=True,
+        null=True,
     )
     course = models.ForeignKey(
         to=Course, on_delete=models.SET_NULL, related_name="payment", null=True
@@ -33,11 +41,23 @@ class Payment(models.Model):
     lesson = models.ForeignKey(
         to=Lesson, on_delete=models.SET_NULL, related_name="payment", null=True
     )
-    amount = models.IntegerField(
-        verbose_name="Сумма платежа", help_text="Укажите сумму платежа"
+    amount = models.PositiveIntegerField(
+        verbose_name="Сумма платежа",
+    )
+    session_id = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        help_text="ID сессии",
     )
     payment_method = models.CharField(
-        verbose_name="Способ оплаты", help_text="Укажите способ оплаты"
+        verbose_name="Способ оплаты", null=True, blank=True
+    )
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на оплату",
     )
 
 
